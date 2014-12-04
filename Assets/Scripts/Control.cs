@@ -6,6 +6,8 @@ public class Control : MonoBehaviour{
 
 	public float balancingForce = 2f;
 	public float footForce = 20f;
+	public float leaningForce = 5f;
+	public float frictionForce = -1f;
 
 	private float leftX;
 	private float leftY;
@@ -51,8 +53,14 @@ public class Control : MonoBehaviour{
 		SetLegContraction(true, rTrigger * rTrigger);
 		SetLegContraction(false, lTrigger * lTrigger);
 
-		// SetLegAngle(true, Input.GetAxis("Right X")+1f*0.5f);
-		// SetLegAngle(false, Input.GetAxis("Left X")+1f*0.5f);
+		LeanLeft(rTrigger * leaningForce);
+		LeanRight(lTrigger * leaningForce);
+
+		//SetLegAngle(true, Input.GetAxis("Right X")+1f*0.5f);
+		//SetLegAngle(false, Input.GetAxis("Left X")+1f*0.5f);
+
+		//SetLegContraction(true, 1f-(Input.GetAxis("Right Y")+1f*0.5f));
+		//SetLegContraction(false, 1f-(Input.GetAxis("Left Y")+1f*0.5f));
 
 		FootForce(true, new Vector2(
 					Input.GetAxis("Right X"),
@@ -91,6 +99,7 @@ public class Control : MonoBehaviour{
 				}
 			}else{
 				thisFoot.rigidbody.AddForce(new Vector3(force.x, force.y, 0));
+				otherFoot.rigidbody.AddForce(new Vector3(0, frictionForce, 0));
 			}
 		}else{
 			thisFoot.rigidbody.AddForce(new Vector3(force.x * 0.1f, force.y * 0.1f, 0));
@@ -99,10 +108,11 @@ public class Control : MonoBehaviour{
 
 	void SetLegAngle(bool left, float rotation){
 		Rigidbody leg = leftUpperLeg;
-		float maxRotation = -60;
+		float maxRotation = 90f;
 		JointSpring spring = leg.hingeJoint.spring;
 		if(!left){
 			leg = rightUpperLeg;
+			maxRotation *= -1f;
 		}
 		spring.targetPosition = rotation * maxRotation;
 		leg.hingeJoint.spring = spring;
