@@ -4,6 +4,7 @@ using System;
 
 public class Control : MonoBehaviour{
 
+	public bool usePS4Controller = false;
 	public float balancingForce = 2f;
 	public float footForce = 20f;
 	public float leaningForce = 5f;
@@ -48,6 +49,11 @@ public class Control : MonoBehaviour{
 
 		float rTrigger = Input.GetAxis("Right Trigger");
 		float lTrigger = Input.GetAxis("Left Trigger");
+
+		if(usePS4Controller){
+			rTrigger = (rTrigger+1f)/2f;
+			lTrigger = (lTrigger+1f)/2f;
+		}
 
 		// Square our triggers for exponential response
 		SetLegContraction(true, rTrigger * rTrigger);
